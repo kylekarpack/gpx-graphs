@@ -1,17 +1,56 @@
 {
-    "extends": "../tslint.json",
+//     //"extends": "tslint:recommended",
+// 	//"rulesDirectory": ["path/to/custom/rules/directory/", "another/path/"],
     "rules": {
-        "directive-selector": [
-            true,
-            "attribute",
-            "app",
-            "camelCase"
-        ],
-        "component-selector": [
-            true,
-            "element",
-            "app",
-            "kebab-case"
-        ]
-    }
+        "max-line-length": {
+            "options": [140]
+		},
+		"semicolon": true,
+        "quotemark": [true,
+            "double",
+            "avoid-escape"
+		],
+		"prefer-template": true,
+		"whitespace": [true, "check-branch", "check-decl"],
+		"comment-format": [true, "check-space", { "ignore-words": "html"  }],
+		"triple-equals": [true, "allow-null-check", "allow-undefined-check"],
+		"use-isnan": true,
+		"indent": [true, "tabs"],
+		"no-switch-case-fall-through": true,
+		"no-var-keyword": true,
+        "new-parens": true,
+        "no-arg": true,
+        "no-conditional-assignment": true,
+		"no-consecutive-blank-lines": false,
+		"no-debugger": true,
+		"curly": true,
+		"no-construct": true,
+		"no-duplicate-variable": true,
+		"no-eval": true,
+		"space-before-function-paren": false,
+		"one-line": [true, "check-else", "check-open-brace", "check-whitespace"],
+        "no-console": {
+            "severity": "default",
+            "options": [
+                "debug",
+                "info",
+                "log",
+                "time",
+                "timeEnd",
+                "trace"
+            ]
+        }
+	}
 }
+// For upgrading from Rxjs 5 to Rxjs 6
+// {
+// 	"rulesDirectory": [
+// 	  "node_modules/rxjs-tslint"
+// 	],
+// 	"rules": {
+// 	  "rxjs-collapse-imports": true,
+// 	  "rxjs-pipeable-operators-only": true,
+// 	  "rxjs-no-static-observable-methods": true,
+// 	  "rxjs-proper-imports": true
+// 	}
+//   }
