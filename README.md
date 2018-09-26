@@ -1,6 +1,8 @@
 # GpxGraphs
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.0.
+GPX Graphs is a simple web application allowing you to view data on a set of GPX files
+
+
 
 ## Development server
 
