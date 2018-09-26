@@ -3,3 +3,8 @@
 </h1>
 
 <input type="file" multiple (change)="filesAdded($event)" />
+
+
+<h2>Stats</h2>
+
+<p>Distance: {{ stats.distance | number }} {{ options.units }}</p>

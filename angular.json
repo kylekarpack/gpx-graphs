@@ -23,7 +23,7 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.scss"
             ],
             "scripts": []
           },
@@ -118,5 +118,14 @@
       }
     }
   },
-  "defaultProject": "gpx-graphs"
+  "defaultProject": "gpx-graphs",
+  "schematics": {
+	"@schematics/angular:component": {
+		"prefix": "gpx",
+		"styleext": "scss"
+	},
+	"@schematics/angular:directive": {
+		"prefix": "gpx"
+	}
+}
 }
