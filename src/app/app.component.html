@@ -4,32 +4,23 @@
 
 <input type="file" multiple (change)="filesAdded($event)" />
 
-<table>
-	<thead>
-		<tr>
-			<th>Track</th>
-			<th>Distance</th>
-			<th>Start Date</th>
-			<th>End Date</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr *ngFor="let track of results">
-			<td>{{ track.name }}</td>
-			<td>{{ track.distance | number }}</td>
-			<td>{{ track.start | date : 'short' }}</td>
-			<td>{{ track.end | date : 'short' }}</td>
-		</tr>
-	</tbody>
-	<tfoot>
-		<tr>
-			<td></td>
-			<td>{{ stats.distance | number }}</td>
-		</tr>
-	</tfoot>
-</table>
+<dx-data-grid [dataSource]="results" [showBorders]="true">
+	<dxi-column dataField="name">Track</dxi-column>
+	<dxi-column dataField="distance">Distance</dxi-column>
+	<dxi-column dataField="netElevation">Net Elevation</dxi-column>
+	<dxi-column dataField="totalElevation">Total Elevation</dxi-column>
+	<dxi-column dataField="start">Start Date</dxi-column>
+	<dxi-column dataField="end">End Date</dxi-column>
 
 
-<h2>Stats</h2>
+	<dxo-summary>
+		<dxi-total-item column="name" summaryType="count">
+		</dxi-total-item>
+		<dxi-total-item column="distance" summaryType="sum">
+		</dxi-total-item>
 
-<p>Distance: {{ stats.distance | number }} {{ options.units }}</p>
+		<dxi-total-item column="totalElevation" summaryType="sum">
+		</dxi-total-item>
+	</dxo-summary>
+
+</dx-data-grid>

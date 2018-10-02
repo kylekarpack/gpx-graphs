@@ -22,16 +22,15 @@
     "@angular/platform-browser": "^6.0.0",
     "@angular/platform-browser-dynamic": "^6.0.0",
     "@angular/router": "^6.0.0",
-    "@clr/angular": "^0.13.3",
     "@mapbox/togeojson": "^0.16.0",
     "@turf/turf": "^5.1.6",
+    "@webcomponents/custom-elements": "^1.0.0",
     "core-js": "^2.5.4",
+    "devextreme": "^18.1.6",
+    "devextreme-angular": "^18.1.6",
     "gpx-parse": "^0.10.4",
     "rxjs": "^6.0.0",
-    "zone.js": "^0.8.26",
-    "@clr/ui": "^0.13.3",
-    "@clr/icons": "^0.13.3",
-    "@webcomponents/custom-elements": "^1.0.0"
+    "zone.js": "^0.8.26"
   },
   "devDependencies": {
     "@angular/compiler-cli": "^6.0.0",

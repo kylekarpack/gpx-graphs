@@ -45,7 +45,36 @@ export class AppComponent {
 				const xml = new DOMParser().parseFromString(data.target.result, "text/xml"),
 					geoJson = toGeoJson.gpx(xml);
 
-				const points = xml.querySelectorAll("trk trkseg trkpt");
+				const points = Array.from(xml.querySelectorAll("trk trkseg trkpt"));
+
+				let min = Number(points[0].children[0].innerHTML), 
+					max = min, 
+					prevElevation,
+					totalElevation = 0,
+					reducedPoints = [];
+
+				for (let i = 0; i < points.length; i++) {
+
+					const point = points[i],
+						elevation = Number(point.children[0].innerHTML);
+					
+					if (elevation < min) {
+						min = elevation
+					} else if (elevation > max) {
+						max = elevation;
+					}
+
+					if (prevElevation && prevElevation < elevation) {
+						totalElevation += (elevation - prevElevation);
+					}
+
+					prevElevation = elevation;
+
+					// if (i % Math.round(points.length / 20) === 0) {
+					// 	reduced.push({ date })
+					// }
+				}
+
 
 				this.results.push({ 
 					geoJson: geoJson, 
@@ -54,6 +83,8 @@ export class AppComponent {
 					name: xml.querySelector("trk name").innerHTML,
 					start: new Date(points[0].querySelector("time").innerHTML),
 					end: new Date(points[points.length - 1].querySelector("time").innerHTML),
+					netElevation: Math.round(max - min),
+					totalElevation: Math.round(totalElevation)
 				});
 
 				// Process if all complete
