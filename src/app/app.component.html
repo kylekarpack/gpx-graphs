@@ -4,6 +4,31 @@
 
 <input type="file" multiple (change)="filesAdded($event)" />
 
+<table>
+	<thead>
+		<tr>
+			<th>Track</th>
+			<th>Distance</th>
+			<th>Start Date</th>
+			<th>End Date</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr *ngFor="let track of results">
+			<td>{{ track.name }}</td>
+			<td>{{ track.distance | number }}</td>
+			<td>{{ track.start | date : 'short' }}</td>
+			<td>{{ track.end | date : 'short' }}</td>
+		</tr>
+	</tbody>
+	<tfoot>
+		<tr>
+			<td></td>
+			<td>{{ stats.distance | number }}</td>
+		</tr>
+	</tfoot>
+</table>
+
 
 <h2>Stats</h2>
 

@@ -12,6 +12,8 @@ export class AppComponent {
 
 	constructor() {	}
 
+	public results: any[] = [];
+
 	public options: any = {
 		units: "miles"
 	};
@@ -24,7 +26,7 @@ export class AppComponent {
 
 	public filesAdded($event: any): void {
 
-		const results = [];
+		this.results = [];
 		
 
 		for (let file of $event.target.files) {
@@ -43,11 +45,20 @@ export class AppComponent {
 				const xml = new DOMParser().parseFromString(data.target.result, "text/xml"),
 					geoJson = toGeoJson.gpx(xml);
 
-				results.push(geoJson);
+				const points = xml.querySelectorAll("trk trkseg trkpt");
+
+				this.results.push({ 
+					geoJson: geoJson, 
+					xml: xml,
+					distance: length(geoJson, this.options),
+					name: xml.querySelector("trk name").innerHTML,
+					start: new Date(points[0].querySelector("time").innerHTML),
+					end: new Date(points[points.length - 1].querySelector("time").innerHTML),
+				});
 
 				// Process if all complete
-				if (results.length >= $event.target.files.length) {
-					this.process(results);
+				if (this.results.length >= $event.target.files.length) {
+					this.process();
 				}
 	
 
@@ -58,9 +69,9 @@ export class AppComponent {
 
 	}
 
-	private process(results: any[]): void {
+	private process(): void {
 		// Get a sum of the distances
-		this.stats.distance = results.map(el => length(el, this.options)).reduce((a,b) => a + b, 0);
+		this.stats.distance = this.results.map(el => el.distance).reduce((a,b) => a + b, 0);
 
 	}
 
