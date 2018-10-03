@@ -12,6 +12,24 @@
 	<dxi-column dataField="start">Start Date</dxi-column>
 	<dxi-column dataField="end">End Date</dxi-column>
 
+	<dxi-column caption="Profile" [minWidth]="320" cellTemplate="chartCellTemplate"></dxi-column>
+
+	<div *dxTemplate="let d of 'chartCellTemplate'">
+		<div class="chart-cell">
+			<dx-sparkline
+				[dataSource]="d.data.reducedPoints"
+				argumentField="date"
+				valueField="elevation"
+				type="splinearea"
+				[showMinMax]="true"
+				minColor="#1b2ab7"
+				maxColor="#2ab71b"
+				[pointSize]="4">
+				<dxo-size [width]="290" [height]="40"></dxo-size>
+				<dxo-tooltip [enabled]="false"></dxo-tooltip>
+			</dx-sparkline>
+		</div>
+	</div>
 
 	<dxo-summary>
 		<dxi-total-item column="name" summaryType="count">

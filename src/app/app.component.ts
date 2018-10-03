@@ -70,9 +70,12 @@ export class AppComponent {
 
 					prevElevation = elevation;
 
-					// if (i % Math.round(points.length / 20) === 0) {
-					// 	reduced.push({ date })
-					// }
+					if (i % Math.round(points.length / 20) === 0) {
+						reducedPoints.push({ 
+							date:  new Date(point.querySelector("time").innerHTML),
+							elevation: elevation
+						})
+					}
 				}
 
 
@@ -84,7 +87,8 @@ export class AppComponent {
 					start: new Date(points[0].querySelector("time").innerHTML),
 					end: new Date(points[points.length - 1].querySelector("time").innerHTML),
 					netElevation: Math.round(max - min),
-					totalElevation: Math.round(totalElevation)
+					totalElevation: Math.round(totalElevation),
+					reducedPoints: reducedPoints
 				});
 
 				// Process if all complete

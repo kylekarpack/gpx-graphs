@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { DxDataGridComponent, DxDataGridModule, DxCheckBoxModule } from 'devextreme-angular';
+import { DxDataGridComponent, DxDataGridModule, DxCheckBoxModule, DxSparklineModule, DxTemplateModule } from 'devextreme-angular';
 
 
 @NgModule({
@@ -13,7 +13,9 @@ import { DxDataGridComponent, DxDataGridModule, DxCheckBoxModule } from 'devextr
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    DxDataGridModule
+    DxDataGridModule,
+    DxSparklineModule,
+    DxTemplateModule
   ],
   providers: [],
   bootstrap: [AppComponent]
