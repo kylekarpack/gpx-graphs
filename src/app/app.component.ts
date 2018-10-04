@@ -1,16 +1,22 @@
-import { Component } from "@angular/core";
+import { Component, ViewEncapsulation } from "@angular/core";
 import * as GpxParse from "gpx-parse/dist/gpx-parse-browser.js";
 import * as toGeoJson from "@mapbox/togeojson";
 import length from "@turf/length";
+import center from "@turf/center";
+import bbox from "@turf/bbox";
+import { LngLatBounds } from 'mapbox-gl';
+
 
 @Component({
 	selector: "app-root",
 	templateUrl: "./app.component.html",
-	styleUrls: ["./app.component.css"]
+	styleUrls: ["./app.component.scss"],
+	encapsulation: ViewEncapsulation.None
 })
 export class AppComponent {
 
-	constructor() {	}
+	constructor(
+	) {	}
 
 	public results: any[] = [];
 
@@ -51,13 +57,14 @@ export class AppComponent {
 					max = min, 
 					prevElevation,
 					totalElevation = 0,
-					reducedPoints = [];
+					reducedPoints = [],
+					bounds = bbox(geoJson);
 
 				for (let i = 0; i < points.length; i++) {
 
 					const point = points[i],
 						elevation = Number(point.children[0].innerHTML);
-					
+										
 					if (elevation < min) {
 						min = elevation
 					} else if (elevation > max) {
@@ -78,9 +85,10 @@ export class AppComponent {
 					}
 				}
 
-
 				this.results.push({ 
 					geoJson: geoJson, 
+					center: center(geoJson),
+					bounds: new LngLatBounds([bounds[0], bounds[1]], [bounds[2], bounds[3]]),
 					xml: xml,
 					distance: length(geoJson, this.options),
 					name: xml.querySelector("trk name").innerHTML,

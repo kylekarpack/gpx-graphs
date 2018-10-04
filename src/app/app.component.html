@@ -2,9 +2,18 @@
 	Upload GPX Files
 </h1>
 
-<input type="file" multiple (change)="filesAdded($event)" />
+<input type="file" multiple accept=".gpx" (change)="filesAdded($event)" />
 
-<dx-data-grid [dataSource]="results" [showBorders]="true">
+<dx-data-grid #grid
+	[dataSource]="results" 
+	[showBorders]="true"
+	[showRowLines]="true"	
+	[hoverStateEnabled]="true"
+	keyExpr="name"
+    [selectedRowKeys]="[]">
+	
+	<dxo-selection mode="single"></dxo-selection>
+	
 	<dxi-column dataField="name">Track</dxi-column>
 	<dxi-column dataField="distance">Distance</dxi-column>
 	<dxi-column dataField="netElevation">Net Elevation</dxi-column>
@@ -42,3 +51,25 @@
 	</dxo-summary>
 
 </dx-data-grid>
+
+<div *ngIf="grid.selectedRowKeys.length">
+
+	<ng-container *ngIf="grid.instance?.getSelectedRowsData()[0] as track">
+
+	<mgl-map [style]="'mapbox://styles/mapbox/outdoors-v9'" 
+		[fitBounds]="track.bounds" [fitBoundsOptions]="{ padding: 20 }" 
+		[center]="track.center?.geometry?.coordinates" [zoom]="[12]"> 
+		<mgl-layer id="route" type="line"
+			[source]="{
+				'type': 'geojson',
+				'data': track.geoJson.features[0]
+			}"></mgl-layer>
+	</mgl-map>
+
+	{{ track.bounds | json }}
+	{{ track.center | json }}
+
+	{{ track.name }}
+	</ng-container>
+</div>
+

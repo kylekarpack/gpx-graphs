@@ -29,6 +29,8 @@
     "devextreme": "^18.1.6",
     "devextreme-angular": "^18.1.6",
     "gpx-parse": "^0.10.4",
+    "mapbox-gl": "^0.48.0",
+    "ngx-mapbox-gl": "^2.1.1",
     "rxjs": "^6.0.0",
     "zone.js": "^0.8.26"
   },
