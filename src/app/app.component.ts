@@ -1,121 +1,134 @@
 import { Component, ViewEncapsulation } from "@angular/core";
-import * as GpxParse from "gpx-parse/dist/gpx-parse-browser.js";
 import * as toGeoJson from "@mapbox/togeojson";
-import length from "@turf/length";
-import center from "@turf/center";
 import bbox from "@turf/bbox";
+import center from "@turf/center";
+import length from "@turf/length";
 import { LngLatBounds } from 'mapbox-gl';
+import { TIME_SELECTOR, TRACK_NAME_SELECTOR, TRACK_POINTS_SELECTOR } from "./constants/selectors";
+import { Stats } from "./interfaces/stats";
 
 
 @Component({
-	selector: "app-root",
-	templateUrl: "./app.component.html",
-	styleUrls: ["./app.component.scss"],
-	encapsulation: ViewEncapsulation.None
+    selector: "app-root",
+    templateUrl: "./app.component.html",
+    styleUrls: ["./app.component.scss"],
+    encapsulation: ViewEncapsulation.None
 })
 export class AppComponent {
 
-	constructor(
-	) {	}
+    constructor() { }
 
-	public results: any[] = [];
+    /** Keep track of the results rows for display */
+    public results: Stats[] = [];
 
-	public options: any = {
-		units: "miles"
-	};
+    /** Keep track of the aggregate stats */
+    public stats = {
+        distance: 0,
+        elevation: 0
+    };
 
-	// Simple tracker for stats
-	public stats = {
-		distance: 0,
-		elevation: 0
-	};
+    /** Allow for some user-defined options */
+    public options: any = {
+        units: "miles"
+    };
 
-	public filesAdded($event: any): void {
+    /**
+     * Run the application logic when files are added to the file uploader
+     * @param  {Event} $event
+     * @returns void
+     */
+    public filesAdded($event: any): void {
 
-		this.results = [];
-		
+        // Clear out the grid when new files are added
+        this.results = [];
 
-		for (let file of $event.target.files) {
+        for (let file of $event.target.files) {
 
-			const reader = new FileReader();
+            const reader = new FileReader();
 
-			reader.onload = (data: any) => {
-				// ToDo: re-implement this to add back time as a factor
-				// GpxParse.parseGpx(data.target.result, (error, result) => {
-				// 	if (error) {
-				// 		alert("Something went wrong!");
-				// 		console.error(error);
-				// 	}
-				// 	});
+            reader.onload = (data: any) => {
 
-				const xml = new DOMParser().parseFromString(data.target.result, "text/xml"),
-					geoJson = toGeoJson.gpx(xml);
+                this.results.push(this.getStatsFromFile(data.target.result));
 
-				const points = Array.from(xml.querySelectorAll("trk trkseg trkpt"));
+                // Process if all complete
+                if (this.results.length >= $event.target.files.length) {
+                    this.stats.distance = this.processAllStats();
+                }
 
-				let min = Number(points[0].children[0].innerHTML), 
-					max = min, 
-					prevElevation,
-					totalElevation = 0,
-					reducedPoints = [],
-					bounds = bbox(geoJson);
+            };
 
-				for (let i = 0; i < points.length; i++) {
+            // Perform the read
+            reader.readAsText(file);
+        }
+    }
+    
+    /**
+     * Calculate statistics from a given file and return them
+     * @param  {string} fileData
+     * @returns Stats
+     */
+    private getStatsFromFile(fileData: string): Stats {
+        const xml = new DOMParser().parseFromString(fileData, "text/xml"),
+            geoJson = toGeoJson.gpx(xml);
 
-					const point = points[i],
-						elevation = Number(point.children[0].innerHTML);
-										
-					if (elevation < min) {
-						min = elevation
-					} else if (elevation > max) {
-						max = elevation;
-					}
+        const points = Array.from(xml.querySelectorAll(TRACK_POINTS_SELECTOR));
 
-					if (prevElevation && prevElevation < elevation) {
-						totalElevation += (elevation - prevElevation);
-					}
+        let min = Number(points[0].children[0].innerHTML),
+            max = min,
+            prevElevation,
+            totalElevation = 0,
+            reducedPoints = [],
+            bounds = bbox(geoJson);
 
-					prevElevation = elevation;
+        // Loop through the points and calculate some states from them
+        for (let i = 0; i < points.length; i++) {
 
-					if (i % Math.round(points.length / 20) === 0) {
-						reducedPoints.push({ 
-							date:  new Date(point.querySelector("time").innerHTML),
-							elevation: elevation
-						})
-					}
-				}
+            const point = points[i],
+                elevation = Number(point.children[0].innerHTML);
 
-				this.results.push({ 
-					geoJson: geoJson, 
-					center: center(geoJson),
-					bounds: new LngLatBounds([bounds[0], bounds[1]], [bounds[2], bounds[3]]),
-					xml: xml,
-					distance: length(geoJson, this.options),
-					name: xml.querySelector("trk name").innerHTML,
-					start: new Date(points[0].querySelector("time").innerHTML),
-					end: new Date(points[points.length - 1].querySelector("time").innerHTML),
-					netElevation: Math.round(max - min),
-					totalElevation: Math.round(totalElevation),
-					reducedPoints: reducedPoints
-				});
+            if (elevation < min) {
+                min = elevation
+            } else if (elevation > max) {
+                max = elevation;
+            }
 
-				// Process if all complete
-				if (this.results.length >= $event.target.files.length) {
-					this.process();
-				}
-	
+            if (prevElevation && prevElevation < elevation) {
+                totalElevation += (elevation - prevElevation);
+            }
 
-			};
+            prevElevation = elevation;
 
-			reader.readAsText(file);
-		}
+            // Reduce the number of points
+            if (i % Math.round(points.length / 20) === 0) {
+                reducedPoints.push({
+                    date: new Date(point.querySelector(TIME_SELECTOR).innerHTML),
+                    elevation: elevation
+                })
+            }
+        }
 
-	}
+        return {
+            geoJson: geoJson,
+            center: center(geoJson),
+            bounds: new LngLatBounds([bounds[0], bounds[1]], [bounds[2], bounds[3]]),
+            xml: xml,
+            distance: length(geoJson, this.options),
+            name: xml.querySelector(TRACK_NAME_SELECTOR).innerHTML,
+            start: new Date(points[0].querySelector(TIME_SELECTOR).innerHTML),
+            end: new Date(points[points.length - 1].querySelector(TIME_SELECTOR).innerHTML),
+            netElevation: Math.round(max - min),
+            totalElevation: Math.round(totalElevation),
+            reducedPoints: reducedPoints
+        };
 
-	private process(): void {
-		// Get a sum of the distances
-		this.stats.distance = this.results.map(el => el.distance).reduce((a,b) => a + b, 0);
+    }
 
-	}
+    /**
+     * Get a sum of the distances
+     * @returns number
+     */
+    private processAllStats(): number {
+        return this.results.map(el => el.distance).reduce((a, b) => a + b, 0);
+    }
 
 }
