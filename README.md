@@ -2,7 +2,7 @@
 
 GPX Graphs is a simple web application allowing you to view data on a set of GPX files
 
-
+![Screenshot of GPX graphs application](https://i2.wp.com/www.kylekarpack.com/wordpress/wp-content/uploads/2018/11/gpx-graphs.png "GPX Graphs")
 
 ## Development server
 
